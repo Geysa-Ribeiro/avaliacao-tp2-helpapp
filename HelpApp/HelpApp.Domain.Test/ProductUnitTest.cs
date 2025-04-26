@@ -1,88 +1,130 @@
 ﻿using HelpApp.Domain.Entities;
+using HelpApp.Domain.Validation;
 using FluentAssertions;
 using Xunit;
+using System;
 
 namespace HelpApp.Domain.Test
 {
     public class ProductUnitTest
     {
         #region Testes Positivos
-        [Fact(DisplayName ="Create Product With Parameters Full")]
-        public void CreateProduct_WithValidParameters_ResultObjectValisState()
+        [Fact(DisplayName ="Should create a valid product with name, description, price, stock and image")]
+        public void CreateProduct_WithValidParameters_ShouldCreateObject()
         {
-            Action action= () => new Product(1, 
-                "Product Name", 
-                "Product Description", 
-                9.99m, 99, 
-                "https://img/product.jpg");
-            action.Should()
-                .NotThrow<HelpApp.Domain.Validation.DomainExceptionValidation>();
+            Action action = () => new Product("Product Name", "Product Description", 99.80m, 12, "/img/productImage.jpg");
+            action.Should().NotThrow<DomainExceptionValidation>();
         }
-        #endregion
-        #region Testes Negativos
-        [Fact(DisplayName ="Create Product With ID Negative")]
-        public void CreateProduct_NegativeIdValue_DomainExceptionInvalidId()
-        {
-            Action action = () => new Product(-1, "Product Name", "Product Description", 9.99m,
-                99, "product image");
 
-            action.Should().Throw<HelpApp.Domain.Validation.DomainExceptionValidation>()
+        [Fact(DisplayName = "Should create a valid product with id and all fields")]
+        public void
+        CreateProduct_WithIdAndValidParameters_ShouldCreateObject()
+        {
+            Action action = () => new Product(1, "Product Name", "Product Description", 280.00m, 17, "/img/productImage.jpg");
+
+            action.Should().NotThrow<DomainExceptionValidation>();
+        }
+
+        #endregion
+
+        #region Testes Negativos
+        [Fact(DisplayName ="Should throw exception when product is created with negative id")]
+        public void CreateProduct_WithNegativeId_ShouldThrowException()
+        {
+            Action action = () => new Product(-1, "Product Name", "Product Description", 120.00m,
+                65, "img/productImage.jpg");
+
+            action.Should().Throw<DomainExceptionValidation>()
                 .WithMessage("Update Invalid Id value");
         }
 
-        [Fact(DisplayName = "Create Product With Short Name")]
-        public void CreateProduct_ShortNameValue_DomainExceptionShortName()
+        [Theory(DisplayName = "Should throw exception when product has null or empty name")]
+        [InlineData(null)]
+        [InlineData("")]
+        public void CreateProduct_WithNullOrEmptyName_ShouldThrowException(string name)
         {
-            Action action = () => new Product(1, "Pr", "Product Description", 9.99m, 99,
-                "product image");
-            action.Should().Throw<HelpApp.Domain.Validation.DomainExceptionValidation>()
-                 .WithMessage("Invalid name, too short, minimum 3 characters.");
+            Action action = () => new Product(name!, "Product Description", 120.00m, 65,
+                "/img/productImage.jpg");
+            action.Should().Throw<DomainExceptionValidation>()
+                 .WithMessage("Invalid name, name is required.");
         }
 
-        [Fact(DisplayName = "Create Product With Null URL Image")]
-        public void CreateProduct_WithNullImageName_NoDomainException()
+        [Fact(DisplayName = "Should throw exception when name has less than 3 characters.")]
+        public void CreateProduct_WithShortName_ShouldThrowException()
         {
-            Action action = () => new Product(1, "Product Name", "Product Description", 9.99m, 99, null);
-            action.Should().NotThrow<HelpApp.Domain.Validation.DomainExceptionValidation>();
+            Action action = () => new Product("Pr", "Product Descrption", 120.00m, 65, "/img/produtImage.jpg");
+
+            action.Should().Throw<DomainExceptionValidation>
+            ().WithMessage("Invalid name, too short, minimum 3 characters");
+
+        }
+
+        [Theory(DisplayName = "Should throw exception when description is null or empty")]
+        [InlineData(null)]
+        [InlineData("")]
+
+        public void CreateProduct_WithNullOrEmptyDescription_ShouldThrowException(string description)
+        {
+            Action action = () => new Product("Product Name", description!, 120.00m, 65, "/img/productImage.jpg");
+
+            action.Should().Throw<DomainExceptionValidation>
+            ().WithMessage("Invalid description, name is required");
+        }
+
+        [Fact(DisplayName = "Should throw exception when description is too short")]
+        public void CreateProduct_WithShortDescription_ShouldThrowException()
+        {
+            Action action = () => new Product("Product Name", "Prod", 120.00m, 65, "/img/productImage.jpg");
+
+            action.Should().Throw<DomainExceptionValidation>
+            ().WithMessage("Invalid description, too short, minimum 5 characters.");
+
+        }
+
+        [Fact(DisplayName = "Should throw exception when price is negative")]
+        public void CreateProduct_WithNegativePrice_ShouldThrowException()
+        {
+            Action action = () => new Product("Product Name", "Product Description", -120.00m, 65, "/img/produtImage.jpg");
+
+            action.Should().Throw<DomainExceptionValidation>
+            ().WithMessage("Invalid price negative value.");
         }
 
 
-        [Fact(DisplayName = "Create Product With URL Image Empty")]
-        public void CreateProduct_WithEmptyImageName_NoDomainException()
+        [Fact(DisplayName = "Should throw exception when stock is negative")]
+        public void CreateProduct_WithNegativeStock_ShouldThrowException()
         {
-            Action action = () => new Product(1, "Product Name", "Product Description", 9.99m, 99, "");
-            action.Should().NotThrow<HelpApp.Domain.Validation.DomainExceptionValidation>();
+            Action action = () => new Product("Product Name", "Product Description", 120.00m, -65, "/img/productImage.jpg");
+
+            action.Should().Throw<DomainExceptionValidation>
+                ().WithMessage("Invalid stock negative value.");
         }
 
-        [Theory(DisplayName = "Create Product With Invalid Price")]
-        [InlineData(-25)]
-        public void CreateProduct_InvalidPriceValue_DomainException(int value)
+
+
+        [Theory(DisplayName = "Should throw exception when image is null or empty")]
+        [InlineData(null)]
+        [InlineData("")]
+        public void CreateProduct_WithNullOrEmptyImage_ShouldThrowException(string image)
         {
-            Action action = () => new Product(1, "Product Name", "Product Description", value,
-                99, "");
-            action.Should().Throw<HelpApp.Domain.Validation.DomainExceptionValidation>()
-                 .WithMessage("Invalid price negative value.");
+            Action action = () => new Product(1, "Product Name", "Product Description", 120.00m,
+               65, image!);
+
+            action.Should().Throw<DomainExceptionValidation>
+            ().WithMessage("Invalid image address, image is required.");
         }
 
-        [Theory(DisplayName = "Create Product With Inavlid Stock")]
-        [InlineData(-5)]
-        public void CreateProduct_InvalidStockValue_ExceptionDomainNegativeValue(int value)
+        [Fact(DisplayName = "Should throw exception when image length exceeds 250 characters")]
+        public void CreateProduct_WithTooLongImageName_ShouldThrowException()
         {
-            Action action = () => new Product(1, "Pro", "Product Description", 9.99m, value,
-                "product image");
-            action.Should().Throw<HelpApp.Domain.Validation.DomainExceptionValidation>()
-                   .WithMessage("Invalid stock negative value.");
+            string longImageName = new string('p', 300);
+
+            Action action = () => new Product("Product Name", "Product Description", 120.00m, 65, longImageName);
+
+            action.Should().Throw<DomainExceptionValidation>
+            ().WithMessage("Invalid image name, too long, maximum 250 characters.");
         }
-        [Theory(DisplayName = "Create Product With Long URL Image")]
-        [InlineData("https://avatars.githubusercontent.com/u/654654651398798798798798798798798798654654321321321321321321321321321321321321321321321658479879879846465465465465465132198498498465465246549879879846213219849849846521321684684987465132165419687498746541631658468465840123321005408?v=4&size=64")]
-        public void CreateProduct_LongImageName_DomainExceptionLongImageName(string url)
-        {
-            Action action = () => new Product(1, "Product Name", "Product Description", 9.99m,
-                99, url);
-            action.Should()
-                .Throw<HelpApp.Domain.Validation.DomainExceptionValidation>()
-                 .WithMessage("Invalid image name, too long, maximum 250 characters.");
-        }
+
         #endregion
     }
 }

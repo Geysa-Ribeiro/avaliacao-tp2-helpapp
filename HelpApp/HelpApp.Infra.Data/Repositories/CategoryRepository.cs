@@ -1,15 +1,7 @@
-﻿using System;
-using Threading.Tasks;
-using System.Text;
-using Systems.Collections.Generic;
-using System.Linq;
-using HelpApp.Domain.Entities;
+﻿using HelpApp.Domain.Entities;
 using HelpApp.Domain.Interfaces;
 using HelpApp.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
-using System.Net.NetworkInformation;
-
-
 
 
 namespace HelpApp.Infra.Data.Repositories
@@ -18,10 +10,10 @@ namespace HelpApp.Infra.Data.Repositories
     {
         #region Atributos
 
-        private readonly ApplicationDbContext_dbContext;
+        private readonly ApplicationDbContext _dbContext;
 
         #endregion
-    
+
         #region Construtor
 
         public CategoryRepository(ApplicationDbContext dbContext)
@@ -37,12 +29,12 @@ namespace HelpApp.Infra.Data.Repositories
         {
             var categories = await
 
-           _dbContext.Categories.AsNoTracking().OrderBy(Category => category.Name).ToListAsync();
+           _dbContext.Categories.AsNoTracking().OrderBy(category => category.Name).ToListAsync();
 
             return categories;
         }
 
-        public async Task<Category> GetById(int id)
+        public async Task<Category> GetById(int? id)
         {
             ValidateId(id);
 
@@ -89,18 +81,17 @@ namespace HelpApp.Infra.Data.Repositories
 
         #region Validação
 
-        private void ValidateCategory(Category category)
+        private void ValidateCategory(Category? category)
         {
             if (category == null)
                 throw new ArgumentNullException(nameof(category), "Category must be provided.");
         }
 
-        private void ValidateId (int id)
+        private void ValidateId(int? id)
         {
             if (!id.HasValue || id <= 0)
                 throw new ArgumentException("Category ID has be a positive number.", nameof(id));
         }
-
 
         #endregion
     }

@@ -5,11 +5,16 @@ namespace HelpApp.Domain.Entities
     public class Category
     {
         #region Atributos
+
         public int Id { get; set; }
         public string Name { get; set; }
+        public ICollection<Product> Products { get; set; }
+
+
         #endregion
 
         #region Construtores
+
         public Category(string name)
         {
             ValidateDomain(name);
@@ -22,10 +27,10 @@ namespace HelpApp.Domain.Entities
             ValidateDomain(name);
         }
 
-        public ICollection<Product> Products { get; set; }
         #endregion
 
         #region Validação
+
         private void ValidateDomain(string name)
         {
             DomainExceptionValidation.When(string.IsNullOrEmpty(name),
