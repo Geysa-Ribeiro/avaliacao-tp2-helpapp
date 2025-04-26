@@ -14,7 +14,12 @@ namespace HelpApp.Infra.Data.EntitiesConfiguration
             builder.HasData(
               new Category(1, "Material Escolar"),
               new Category(2, "Eletrônicos"),
-              new Category(3, "Acessórios")
+              new Category(3, "Vestuário"),
+              new Category(4, "Ferramentas"),
+              new Category(5, "Eletrodomésticos"),
+              new Category(6, "Calçados"),
+              new Category(7, "Produtos de Limpeza")
+
             );
         }
     }
