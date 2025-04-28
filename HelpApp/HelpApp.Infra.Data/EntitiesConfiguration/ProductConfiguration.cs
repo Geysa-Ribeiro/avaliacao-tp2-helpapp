@@ -20,18 +20,11 @@ namespace HelpApp.Infra.Data.EntitiesConfiguration
 
 
             builder.HasData(
-                new Product(1, "Caneta Bic", "Cor da caneta: azul", 3.50m, 200, "canetabic.jpg")
+                new Product(1, "Caneta Bic", "Cor da caneta: azul", 3.50m, 200, "canetabic.jpg", "2")
                 { CategoryId = 1 },
 
-                new Product(2, "Celular Motorola", "Celular moto g com 256gb de armazenamento", 850.00m, 100, "celularmotog.jpg")
-                { CategoryId = 2 },
-
-                new Product(3, "Shorts Jeans Feminino", "Shorts preto da marca monnari", 125.00m, 50, "shortsmonnari.jpg")
-                { CategoryId = 3 },
-
-                new Product(4, "Martelo", "Martelo pequeno", 70.00m, 350, "martelopequeno.jpg")
-                { CategoryId = 4 }
-
+                new Product(2, "Celular Motorola", "Celular moto g com 256gb de armazenamento", 850.00m, 100, "celularmotog.jpg", "2")
+                { CategoryId = 2 }
                 );
 
         }
